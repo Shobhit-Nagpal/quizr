@@ -1,87 +1,113 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-
-const quizData = {
-  category: "music",
-  id: "5f9f1b9b0e1b9c0017a5f1a5",
-  tags: ["france", "geography", "capital_cities", "cities"],
-  difficulty: "easy",
-  regions: ["string"],
-  isNiche: true,
-  question: {
-    text: "What is the capital of France?"
-  },
-  correctAnswer: "Paris",
-  incorrectAnswers: ["London", "Berlin", "Brussels"],
-  type: "text_choice"
-}
+import { useState, useEffect, useMemo } from "react";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { BASE_URL } from "@/utils/api";
+import { ImageOption, Question } from "@/types";
+import { Loader2 } from "lucide-react";
+import { Category } from "@/components/category";
+import { Tags } from "@/components/tags";
+import { Options } from "@/components/options";
 
 export default function QuizPage() {
-  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
-  const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
-  const [timer, setTimer] = useState(30)
+  const [totalPoints, setTotalPoints] = useState<number>(0);
+  const [questions, setQuestions] = useState<Question[] | null>(null);
+  const [currentQuestionIdx, setCurrentQuestionIdx] = useState<number>(0);
+  const [selectedAnswer, setSelectedAnswer] = useState<
+    string | ImageOption | null
+  >(null);
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const [timer, setTimer] = useState(30);
 
-  const allAnswers = [quizData.correctAnswer, ...quizData.incorrectAnswers].sort(() => Math.random() - 0.5)
+  useEffect(() => {
+    async function getQuestions() {
+      const res = await fetch(`${BASE_URL}/questions`);
+      const questions = await res.json();
+      setQuestions(questions);
+      setCurrentQuestionIdx(0);
+    }
+
+    getQuestions();
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setTimer((prevTimer) => (prevTimer > 0 ? prevTimer - 1 : 0))
-    }, 1000)
+      setTimer((prevTimer) => (prevTimer > 0 ? prevTimer - 1 : 0));
+    }, 1000);
 
-    return () => clearInterval(interval)
-  }, [])
+    return () => clearInterval(interval);
+  }, []);
 
-  const handleAnswerSelect = (answer: string) => {
-    setSelectedAnswer(answer)
-    setIsCorrect(answer === quizData.correctAnswer)
+  const handleAnswerSelect = (answer: string | ImageOption) => {
+    setSelectedAnswer(answer);
+    const isCorrect =
+      JSON.stringify(answer) ===
+      JSON.stringify(questions![currentQuestionIdx].correctAnswer);
+
+    setIsCorrect(isCorrect);
+    if (isCorrect) setTotalPoints((prev) => prev + 1);
+    setCurrentQuestionIdx((prev) =>
+      prev === questions!.length - 1 ? 0 : prev + 1,
+    );
+    setSelectedAnswer(null);
+    setTimer(30);
+  };
+
+  const allAnswers = useMemo(() => {
+    if (!questions) return [];
+    return [
+      questions[currentQuestionIdx].correctAnswer,
+      ...questions[currentQuestionIdx].incorrectAnswers,
+    ].sort(() => Math.random() - 0.5);
+  }, [questions, currentQuestionIdx]);
+
+  if (!questions) {
+    return <Loader2 className="animate-spin" />;
   }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <div className="flex justify-between items-center mb-4">
-            <Badge variant="outline" className="text-sm">
-              {quizData.category}
-            </Badge>
-            <span className="text-2xl font-bold">{timer}s</span>
-          </div>
-          <CardTitle className="text-2xl font-bold">{quizData.question.text}</CardTitle>
+          {totalPoints}
+          <Category
+            category={questions[currentQuestionIdx].category
+              .split("_")
+              .join(" ")}
+            timer={timer}
+          />
+          <CardTitle className="text-2xl font-bold">
+            {questions[currentQuestionIdx].question.text}
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4">
-            {allAnswers.map((answer, index) => (
-              <Button
-                key={index}
-                variant={selectedAnswer === answer ? "default" : "outline"}
-                className="w-full text-left justify-start h-auto py-3 px-4"
-                onClick={() => handleAnswerSelect(answer)}
-                disabled={selectedAnswer !== null || timer === 0}
-              >
-                {answer}
-              </Button>
-            ))}
-          </div>
+          <Options
+            type={questions[currentQuestionIdx].type}
+            options={allAnswers}
+            selectedAnswer={selectedAnswer}
+            onSelect={handleAnswerSelect}
+            timer={timer}
+          />
         </CardContent>
-        {(selectedAnswer || timer === 0) && (
-          <CardFooter className="flex flex-col items-start">
-            <p className={`text-lg font-semibold ${isCorrect ? "text-green-600" : "text-red-600"}`}>
-              {isCorrect ? "Correct!" : `Incorrect. The correct answer is ${quizData.correctAnswer}.`}
+        <CardFooter className="flex flex-col items-start">
+          {(selectedAnswer || timer === 0) && (
+            <p
+              className={`text-lg font-semibold ${isCorrect ? "text-green-600" : "text-red-600"}`}
+            >
+              {isCorrect
+                ? "Correct!"
+                : `Incorrect. The correct answer is ${questions[currentQuestionIdx].correctAnswer}.`}
             </p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {quizData.tags.map((tag, index) => (
-                <Badge key={index} variant="secondary" className="text-xs">
-                  {tag}
-                </Badge>
-              ))}
-            </div>
-          </CardFooter>
-        )}
+          )}
+          <Tags tags={questions[currentQuestionIdx].tags} />
+        </CardFooter>
       </Card>
     </div>
-  )
+  );
 }

@@ -1,4 +1,4 @@
-interface ImageOption {
+export interface ImageOption {
   url: string;
   height: number;
   width: number;
@@ -14,10 +14,10 @@ interface ImageOption {
   license: {
     url: string;
     name: string;
-  }
+  };
 }
 
-export interface TextQuestion {
+export interface Question {
   category: string;
   id: string;
   tags: string[];
@@ -27,22 +27,7 @@ export interface TextQuestion {
   question: {
     text: string;
   };
-  correctAnswer: string;
-  incorrectAnswers: string[];
-  type: "text_choice";
-}
-
-export interface ImageQuestion {
-  category: string;
-  id: string;
-  tags: string[];
-  difficulty: string;
-  regions: string[];
-  isNiche: boolean;
-  question: {
-    text: string;
-  };
-  correctAnswer: ImageOption;
-  incorrectAnswers: ImageOption[];
-  type: "image_choice";
+  correctAnswer: ImageOption | string;
+  incorrectAnswers: ImageOption[] | string[];
+  type: "image_choice" | "text_choice";
 }
