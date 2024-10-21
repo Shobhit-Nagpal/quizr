@@ -52,11 +52,13 @@ export default function QuizPage() {
 
     setIsCorrect(isCorrect);
     if (isCorrect) setTotalPoints((prev) => prev + 1);
-    setCurrentQuestionIdx((prev) =>
-      prev === questions!.length - 1 ? 0 : prev + 1,
-    );
-    setSelectedAnswer(null);
-    setTimer(30);
+    setTimeout(() => {
+      setCurrentQuestionIdx((prev) =>
+        prev === questions!.length - 1 ? 0 : prev + 1,
+      );
+      setSelectedAnswer(null);
+      setTimer(30);
+    }, 2000);
   };
 
   const allAnswers = useMemo(() => {
