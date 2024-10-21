@@ -17,7 +17,7 @@ export interface ImageOption {
   };
 }
 
-export interface Question {
+export interface TQuestion {
   category: string;
   id: string;
   tags: string[];

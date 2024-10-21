@@ -2,6 +2,7 @@ import { ImageOption, Question } from "@/types";
 import React from "react";
 import { Button } from "./ui/button";
 import Image from "next/image";
+import { cn } from "@/lib/utils";
 
 interface OptionsProps {
   type: Question["type"];
@@ -9,12 +10,14 @@ interface OptionsProps {
   selectedAnswer: string | ImageOption | null;
   onSelect: (answer: string | ImageOption) => void;
   timer: number;
+  isCorrect: boolean | null;
 }
 
 export function Options({
   type,
   options,
   selectedAnswer,
+  isCorrect,
   timer,
   onSelect,
 }: OptionsProps) {
@@ -24,7 +27,14 @@ export function Options({
         <Button
           key={index}
           variant={selectedAnswer === option ? "default" : "outline"}
-          className="w-full text-left justify-start h-auto py-3 px-4"
+          className={cn(
+            "w-full text-left justify-start h-auto py-3 px-4",
+            isCorrect === null
+              ? ""
+              : isCorrect && selectedAnswer === option
+                ? "bg-green-500"
+                : "bg-red-500",
+          )}
           onClick={() => onSelect(option)}
           disabled={selectedAnswer !== null || timer === 0}
         >
