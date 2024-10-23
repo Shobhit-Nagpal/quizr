@@ -15,9 +15,10 @@ interface QuestionProps {
   currentQuestion: TQuestion;
   timer: number;
   options: (string | ImageOption)[];
+  onNextQuestion: () => void;
 }
 
-export function Question({ currentQuestion, timer, options }: QuestionProps) {
+export function Question({ currentQuestion, timer, options, onNextQuestion }: QuestionProps) {
   const [totalPoints, setTotalPoints] = useState<number>(0);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<
@@ -32,12 +33,9 @@ export function Question({ currentQuestion, timer, options }: QuestionProps) {
     setIsCorrect(isCorrect);
     if (isCorrect) setTotalPoints((prev) => prev + 1);
     setTimeout(() => {
-      setCurrentQuestionIdx((prev) =>
-        prev === questions!.length - 1 ? 0 : prev + 1,
-      );
       setSelectedAnswer(null);
       setIsCorrect(null);
-      setTimer(30);
+      onNextQuestion();
     }, 2000);
   };
 

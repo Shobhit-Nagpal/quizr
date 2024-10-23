@@ -11,6 +11,13 @@ export default function QuizPage() {
   const [currentQuestionIdx, setCurrentQuestionIdx] = useState<number>(0);
   const [timer, setTimer] = useState(30);
 
+  const handleNextQuestion = () => {
+    setCurrentQuestionIdx((prev) =>
+      prev === questions!.length - 1 ? 0 : prev + 1,
+    );
+    setTimer(30);
+  };
+
   useEffect(() => {
     async function getQuestions() {
       const res = await fetch(`${BASE_URL}/questions`);
@@ -35,10 +42,19 @@ export default function QuizPage() {
 
   const options = useMemo(() => {
     if (!questions) return [];
-    return [
+
+    const array = [
       questions[currentQuestionIdx].correctAnswer,
       ...questions[currentQuestionIdx].incorrectAnswers,
-    ].sort(() => Math.random() - 0.5);
+    ];
+
+    // Fisher-Yates shuffle
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]]; // swap elements
+    }
+
+    return array;
   }, [questions, currentQuestionIdx]);
 
   if (!questions) {
@@ -53,6 +69,7 @@ export default function QuizPage() {
         currentQuestion={currentQuestion}
         timer={timer}
         options={options}
+        onNextQuestion={handleNextQuestion}
       />
     </div>
   );
