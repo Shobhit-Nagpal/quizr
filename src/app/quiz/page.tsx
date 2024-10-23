@@ -5,8 +5,10 @@ import { BASE_URL } from "@/utils/api";
 import { TQuestion } from "@/types";
 import { Loader2 } from "lucide-react";
 import { Question } from "@/components/question";
+import { QuizStats } from "@/components/quiz-stats";
 
 export default function QuizPage() {
+  const [totalPoints, setTotalPoints] = useState<number>(0);
   const [questions, setQuestions] = useState<TQuestion[] | null>(null);
   const [currentQuestionIdx, setCurrentQuestionIdx] = useState<number>(0);
   const [timer, setTimer] = useState(30);
@@ -58,18 +60,24 @@ export default function QuizPage() {
   }, [questions, currentQuestionIdx]);
 
   if (!questions) {
-    return <Loader2 className="animate-spin" />;
+    return (
+      <div className="w-full flex flex-col items-center justify-center min-h-screen h-full">
+        <Loader2 className="w-8 h-8 animate-spin" />
+      </div>
+    );
   }
 
   const currentQuestion = questions[currentQuestionIdx];
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background p-4">
+    <div className="flex flex-col gap-4 items-center justify-center min-h-screen bg-background p-4">
+      <QuizStats totalPoints={totalPoints} />
       <Question
         currentQuestion={currentQuestion}
         timer={timer}
         options={options}
         onNextQuestion={handleNextQuestion}
+        setTotalPoints={setTotalPoints}
       />
     </div>
   );

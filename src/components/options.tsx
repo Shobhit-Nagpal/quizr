@@ -1,11 +1,11 @@
-import { ImageOption, Question } from "@/types";
+import { ImageOption, TQuestion } from "@/types";
 import React from "react";
 import { Button } from "./ui/button";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 interface OptionsProps {
-  type: Question["type"];
+  type: TQuestion["type"];
   options: (string | ImageOption)[];
   selectedAnswer: string | ImageOption | null;
   onSelect: (answer: string | ImageOption) => void;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import {
   Card,
   CardContent,
@@ -16,10 +16,16 @@ interface QuestionProps {
   timer: number;
   options: (string | ImageOption)[];
   onNextQuestion: () => void;
+  setTotalPoints: Dispatch<SetStateAction<number>>;
 }
 
-export function Question({ currentQuestion, timer, options, onNextQuestion }: QuestionProps) {
-  const [totalPoints, setTotalPoints] = useState<number>(0);
+export function Question({
+  currentQuestion,
+  timer,
+  options,
+  onNextQuestion,
+  setTotalPoints
+}: QuestionProps) {
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<
     string | ImageOption | null
@@ -27,8 +33,7 @@ export function Question({ currentQuestion, timer, options, onNextQuestion }: Qu
   const handleAnswerSelect = (answer: string | ImageOption) => {
     setSelectedAnswer(answer);
     const isCorrect =
-      JSON.stringify(answer) ===
-      JSON.stringify(currentQuestion.correctAnswer);
+      JSON.stringify(answer) === JSON.stringify(currentQuestion.correctAnswer);
 
     setIsCorrect(isCorrect);
     if (isCorrect) setTotalPoints((prev) => prev + 1);
