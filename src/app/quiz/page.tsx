@@ -59,7 +59,7 @@ export default function QuizPage() {
       getQuestions();
     }
 
-    if (currentQuestionIdx % 10 === 0) {
+    if (currentQuestionIdx !== 0 && currentQuestionIdx % 10 === 0) {
       handleNextRound();
     }
   }, [currentQuestionIdx, questions]);
