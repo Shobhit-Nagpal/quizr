@@ -11,12 +11,18 @@ export default function QuizPage() {
   const [totalPoints, setTotalPoints] = useState<number>(0);
   const [questions, setQuestions] = useState<TQuestion[] | null>(null);
   const [currentQuestionIdx, setCurrentQuestionIdx] = useState<number>(0);
+  const [currentRound, setCurrentRound] = useState<number>(1);
   const [timer, setTimer] = useState(30);
 
   const handleNextQuestion = () => {
     setCurrentQuestionIdx((prev) =>
       prev === questions!.length - 1 ? 0 : prev + 1,
     );
+    setTimer(30);
+  };
+
+  const handleNextRound = () => {
+    setCurrentRound((prev) => prev + 1);
     setTimer(30);
   };
 
@@ -41,6 +47,14 @@ export default function QuizPage() {
 
     return () => clearInterval(interval);
   }, [timer, setTimer]);
+
+  useEffect(() => {
+    if (!questions) return;
+
+    if (currentQuestionIdx === questions.length - 1) {
+      handleNextRound();
+    }
+  }, [currentQuestionIdx, questions]);
 
   const options = useMemo(() => {
     if (!questions) return [];
@@ -71,7 +85,7 @@ export default function QuizPage() {
 
   return (
     <div className="flex flex-col gap-4 items-center justify-center min-h-screen bg-background p-4">
-      <QuizStats totalPoints={totalPoints} />
+      <QuizStats totalPoints={totalPoints} currentRound={currentRound} />
       <Question
         currentQuestion={currentQuestion}
         timer={timer}

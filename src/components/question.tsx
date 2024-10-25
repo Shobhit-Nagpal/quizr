@@ -24,7 +24,7 @@ export function Question({
   timer,
   options,
   onNextQuestion,
-  setTotalPoints
+  setTotalPoints,
 }: QuestionProps) {
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<
@@ -36,7 +36,9 @@ export function Question({
       JSON.stringify(answer) === JSON.stringify(currentQuestion.correctAnswer);
 
     setIsCorrect(isCorrect);
+
     if (isCorrect) setTotalPoints((prev) => prev + 1);
+
     setTimeout(() => {
       setSelectedAnswer(null);
       setIsCorrect(null);
