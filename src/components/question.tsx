@@ -62,6 +62,7 @@ export function Question({
           type={currentQuestion.type}
           options={options}
           selectedAnswer={selectedAnswer}
+          correctAnswer={currentQuestion.correctAnswer}
           onSelect={handleAnswerSelect}
           isCorrect={isCorrect}
           timer={timer}
