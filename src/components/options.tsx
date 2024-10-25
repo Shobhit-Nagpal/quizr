@@ -29,6 +29,7 @@ export function Options({
           variant={selectedAnswer === option ? "default" : "outline"}
           className={cn(
             "w-full text-left justify-start h-auto py-3 px-4",
+            "whitespace-normal break-words min-h-[60px]", // Added these classes
             isCorrect === null
               ? ""
               : isCorrect && selectedAnswer === option

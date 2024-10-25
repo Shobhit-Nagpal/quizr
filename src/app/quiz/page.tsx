@@ -14,6 +14,18 @@ export default function QuizPage() {
   const [currentRound, setCurrentRound] = useState<number>(1);
   const [timer, setTimer] = useState(30);
 
+  async function getQuestions() {
+    const res = await fetch(`${BASE_URL}/questions`);
+    const questions = await res.json();
+    setQuestions((prev) => {
+      if (prev === null) {
+        return questions;
+      } else {
+        return [...prev, ...questions];
+      }
+    });
+  }
+
   const handleNextQuestion = () => {
     setCurrentQuestionIdx((prev) =>
       prev === questions!.length - 1 ? 0 : prev + 1,
@@ -23,17 +35,9 @@ export default function QuizPage() {
 
   const handleNextRound = () => {
     setCurrentRound((prev) => prev + 1);
-    setTimer(30);
   };
 
   useEffect(() => {
-    async function getQuestions() {
-      const res = await fetch(`${BASE_URL}/questions`);
-      const questions = await res.json();
-      setQuestions(questions);
-      setCurrentQuestionIdx(0);
-    }
-
     getQuestions();
   }, []);
 
@@ -51,7 +55,11 @@ export default function QuizPage() {
   useEffect(() => {
     if (!questions) return;
 
-    if (currentQuestionIdx === questions.length - 1) {
+    if (currentQuestionIdx === questions.length - 6) {
+      getQuestions();
+    }
+
+    if (currentQuestionIdx % 10 === 0) {
       handleNextRound();
     }
   }, [currentQuestionIdx, questions]);
