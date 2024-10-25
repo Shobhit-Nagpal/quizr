@@ -12,7 +12,6 @@ export default function QuizPage() {
   const [questions, setQuestions] = useState<TQuestion[] | null>(null);
   const [currentQuestionIdx, setCurrentQuestionIdx] = useState<number>(0);
   const [currentRound, setCurrentRound] = useState<number>(1);
-  const [timer, setTimer] = useState(30);
 
   async function getQuestions() {
     const res = await fetch(`${BASE_URL}/questions`);
@@ -30,7 +29,6 @@ export default function QuizPage() {
     setCurrentQuestionIdx((prev) =>
       prev === questions!.length - 1 ? 0 : prev + 1,
     );
-    setTimer(30);
   };
 
   const handleNextRound = () => {
@@ -40,17 +38,6 @@ export default function QuizPage() {
   useEffect(() => {
     getQuestions();
   }, []);
-
-  useEffect(() => {
-    if (timer === 0) {
-      setTimer(30);
-    }
-    const interval = setInterval(() => {
-      setTimer((prevTimer) => (prevTimer > 0 ? prevTimer - 1 : 0));
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [timer, setTimer]);
 
   useEffect(() => {
     if (!questions) return;
@@ -96,7 +83,6 @@ export default function QuizPage() {
       <QuizStats totalPoints={totalPoints} currentRound={currentRound} />
       <Question
         currentQuestion={currentQuestion}
-        timer={timer}
         options={options}
         onNextQuestion={handleNextQuestion}
         setTotalPoints={setTotalPoints}

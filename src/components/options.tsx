@@ -9,8 +9,6 @@ interface OptionsProps {
   options: (string | ImageOption)[];
   selectedAnswer: string | ImageOption | null;
   onSelect: (answer: string | ImageOption) => void;
-  timer: number;
-  isCorrect: boolean | null;
   correctAnswer: string | ImageOption;
 }
 
@@ -18,8 +16,6 @@ export function Options({
   type,
   options,
   selectedAnswer,
-  isCorrect,
-  timer,
   onSelect,
   correctAnswer,
 }: OptionsProps) {
@@ -40,7 +36,7 @@ export function Options({
               "bg-red-500 hover:bg-red-500",
           )}
           onClick={() => onSelect(option)}
-          disabled={selectedAnswer !== null || timer === 0}
+          disabled={selectedAnswer !== null}
         >
           {type === "text_choice" ? (
             <p>{option as string}</p>

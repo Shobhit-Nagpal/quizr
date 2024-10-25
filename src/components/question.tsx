@@ -13,7 +13,6 @@ import { ImageOption, TQuestion } from "@/types";
 
 interface QuestionProps {
   currentQuestion: TQuestion;
-  timer: number;
   options: (string | ImageOption)[];
   onNextQuestion: () => void;
   setTotalPoints: Dispatch<SetStateAction<number>>;
@@ -21,7 +20,6 @@ interface QuestionProps {
 
 export function Question({
   currentQuestion,
-  timer,
   options,
   onNextQuestion,
   setTotalPoints,
@@ -49,10 +47,7 @@ export function Question({
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <Category
-          category={currentQuestion.category.split("_").join(" ")}
-          timer={timer}
-        />
+        <Category category={currentQuestion.category.split("_").join(" ")} />
         <CardTitle className="text-2xl font-bold">
           {currentQuestion.question.text}
         </CardTitle>
@@ -64,12 +59,10 @@ export function Question({
           selectedAnswer={selectedAnswer}
           correctAnswer={currentQuestion.correctAnswer}
           onSelect={handleAnswerSelect}
-          isCorrect={isCorrect}
-          timer={timer}
         />
       </CardContent>
       <CardFooter className="flex flex-col items-start">
-        {(selectedAnswer || timer === 0) && (
+        {selectedAnswer && (
           <p
             className={`text-lg font-semibold ${isCorrect ? "text-green-600" : "text-red-600"}`}
           >
