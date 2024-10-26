@@ -28,6 +28,7 @@ export function Options({
           className={cn(
             "w-full text-left justify-start h-auto py-3 px-4",
             "whitespace-normal break-words min-h-[60px]",
+            "touch-none select-none",
             selectedAnswer &&
               option === correctAnswer &&
               "bg-green-500 hover:bg-green-500",
