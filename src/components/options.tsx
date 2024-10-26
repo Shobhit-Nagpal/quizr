@@ -26,7 +26,7 @@ export function Options({
           key={index}
           variant="outline"
           className={cn(
-            "w-full text-left justify-start h-auto py-3 px-4",
+            "w-full text-left justify-start h-auto py-3 px-4 hover:bg-inherit",
             "whitespace-normal break-words min-h-[60px]",
             "touch-none select-none",
             selectedAnswer &&

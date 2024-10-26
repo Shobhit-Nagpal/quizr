@@ -38,8 +38,8 @@ export function Question({
     if (isCorrect) setTotalPoints((prev) => prev + 1);
 
     setTimeout(() => {
-      setSelectedAnswer(null);
       setIsCorrect(null);
+      setSelectedAnswer(null);
       onNextQuestion();
     }, 2000);
   };
@@ -68,7 +68,7 @@ export function Question({
           >
             {isCorrect
               ? "Correct!"
-              : `Incorrect. The correct answer is ${currentQuestion.correctAnswer}.`}
+              : `The correct answer is ${currentQuestion.correctAnswer}.`}
           </p>
         )}
         <Tags tags={currentQuestion.tags} />
